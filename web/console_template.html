@@ -1,0 +1,374 @@
+<title>READYation Console</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  /* Layout: one column console — status strip, timeline, scrubber, then log + facts. Tokens match the Radiation Comes First report. */
+  :root{color-scheme:dark;--bg:#0b0e13;--s1:#141922;--s2:#1c2330;--s3:#232c3b;--line:#2b3545;--t1:#f1f3f6;--t2:#a8b1be;--t3:#79838f;
+    --blue:#3987e5;--orange:#e0652f;--red:#ec6a63;--aqua:#22b184;--yellow:#e0a92b;--green:#2fb57f;
+    --mono:ui-monospace,"SF Mono","Roboto Mono",Menlo,monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--t1);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1000px 520px at 78% -10%,rgba(34,177,132,.08),transparent 60%)}
+  .wrap{max-width:1040px;margin:0 auto;padding-block:26px 60px;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+  .eyebrow{font:600 12px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--aqua)}
+  h1{font-size:clamp(26px,4vw,38px);line-height:1.08;margin:10px 0 8px;font-weight:800;letter-spacing:-.02em;text-wrap:balance}
+  .sub{font-size:15.5px;color:var(--t2);max-width:70ch;margin:0}.sub b{color:var(--t1)}
+  .tabs{display:flex;gap:6px;margin:22px 0 16px;border-bottom:1px solid var(--line)}
+  .tab{background:none;border:0;border-bottom:2px solid transparent;color:var(--t2);font:600 14px var(--sans);padding:10px 14px;cursor:pointer;margin-bottom:-1px}
+  .tab[aria-selected="true"]{color:var(--t1);border-color:var(--aqua)}
+  .tab:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--aqua);outline-offset:2px}
+  .card{background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .plab{font:700 11px var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  select,button.ctl{background:var(--s2);border:1px solid var(--line);color:var(--t1);border-radius:9px;padding:8px 12px;font:600 13px var(--sans);cursor:pointer}
+  button.ctl.on{background:var(--aqua);border-color:var(--aqua);color:#06120d}
+  button.play{min-width:92px}
+  .speed{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .speed button{background:var(--s2);border:0;color:var(--t2);font:600 12px var(--mono);padding:8px 10px;cursor:pointer}
+  .speed button.on{background:var(--s3);color:var(--t1)}
+  label.chk{display:flex;gap:7px;align-items:center;font-size:13px;color:var(--t2);cursor:pointer}
+  .status{display:grid;grid-template-columns:1.25fr 1fr 1fr 1.2fr;gap:10px;margin-top:14px}
+  @media(max-width:820px){.status{grid-template-columns:1fr 1fr}}
+  .tierbox{border-radius:14px;padding:14px 16px;border:1px solid;min-width:0}
+  .tierbox .name{font:800 26px/1 var(--mono);letter-spacing:.04em}
+  .tierbox .what{font-size:13px;margin-top:6px;color:var(--t1)}
+  .t0{background:rgba(47,181,127,.10);border-color:rgba(47,181,127,.45);color:var(--green)}
+  .t1{background:rgba(224,169,43,.12);border-color:rgba(224,169,43,.55);color:var(--yellow)}
+  .t2{background:rgba(224,101,47,.13);border-color:rgba(224,101,47,.55);color:var(--orange)}
+  .t3{background:rgba(236,106,99,.16);border-color:rgba(236,106,99,.6);color:var(--red)}
+  .stat{background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+  .stat .v{font:800 24px/1.1 var(--mono);margin-top:6px;font-variant-numeric:tabular-nums}
+  .stat .k{font-size:12px;color:var(--t2);margin-top:4px}
+  .chartcard{margin-top:12px;padding:12px 12px 6px}
+  .chartwrap{overflow-x:auto}
+  svg.tl{display:block;width:100%;min-width:560px;height:auto}
+  .scrub{display:flex;gap:12px;align-items:center;margin-top:8px}
+  .scrub input{flex:1;accent-color:var(--aqua)}
+  .clock{font:700 13px var(--mono);color:var(--t1);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--t2);margin:6px 2px 4px}
+  .leg i{display:inline-block;margin-right:6px;vertical-align:middle}
+  .sw{width:12px;height:12px;border-radius:3px}.ln{width:18px;height:2px}
+  .dash{background:repeating-linear-gradient(90deg,var(--aqua) 0 5px,transparent 5px 8px)}
+  .ghost{background:repeating-linear-gradient(90deg,var(--t3) 0 2px,transparent 2px 5px)}
+  .two{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin-top:12px}@media(max-width:820px){.two{grid-template-columns:1fr}}
+  .log{list-style:none;margin:8px 0 0;padding:0;max-height:240px;overflow-y:auto}
+  .log li{display:grid;grid-template-columns:118px 76px 1fr;gap:8px;font-size:12.5px;color:var(--t2);padding:6px 0;border-bottom:1px solid var(--line)}
+  .log li .tm{font:600 11.5px var(--mono);color:var(--t3)}
+  .pill{align-self:start;font:800 10.5px var(--mono);letter-spacing:.08em;text-align:center;border-radius:6px;padding:2px 0;border:1px solid}
+  .empty{font-size:13px;color:var(--t3);margin-top:10px}
+  .facts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto);gap:8px 14px;font-size:13px;margin-top:10px}
+  .facts dt{color:var(--t3)}.facts dd{margin:0;color:var(--t1);font-variant-numeric:tabular-nums;text-align:right;max-width:24ch}
+  .note{font-size:12px;color:var(--t3);margin-top:12px}
+  .banner{margin-top:12px;border:1px dashed var(--line);border-radius:12px;padding:10px 14px;font-size:13px;color:var(--t2)}
+  .banner b{color:var(--yellow)}
+  /* what-if */
+  .wi{display:grid;grid-template-columns:300px 1fr;gap:14px}@media(max-width:820px){.wi{grid-template-columns:1fr}}
+  .sl{margin-top:12px}.sl .top{display:flex;justify-content:space-between;font-size:13px;color:var(--t2)}
+  .sl .top b{font:700 12.5px var(--mono);color:var(--t1)}
+  .sl input{width:100%;accent-color:var(--aqua)}
+  .presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .presets button{background:var(--s2);border:1px solid var(--line);color:var(--t2);border-radius:999px;padding:6px 11px;font:600 12px var(--sans);cursor:pointer}
+  .presets button.on{color:var(--t1);border-color:var(--aqua)}
+  .illu{display:inline-block;font:700 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--yellow);border:1px solid rgba(224,169,43,.5);border-radius:999px;padding:3px 10px}
+  .wistats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}@media(max-width:560px){.wistats{grid-template-columns:1fr}}
+  .foot{margin-top:34px;border-top:1px solid var(--line);padding-top:14px;font-size:12px;color:var(--t3)}
+  /* chart marks */
+  .b1{fill:var(--yellow);opacity:.24}.b2{fill:var(--orange);opacity:.18}.b3{fill:var(--red);opacity:.5}
+  .gl{stroke:var(--line);stroke-dasharray:3 3}.ax{fill:var(--t3);font:11px var(--mono)}
+  .fx{fill:none;stroke:var(--blue);stroke-width:2;stroke-linejoin:round}
+  .fxg{fill:none;stroke:var(--t3);stroke-width:1.2;stroke-dasharray:2 3;opacity:.8}
+  .fc{fill:none;stroke:var(--aqua);stroke-width:2;stroke-dasharray:6 4}
+  .now{stroke:var(--t1);stroke-width:1.2}.nowlab{fill:var(--t1);font:700 11px var(--mono)}
+  .ons{stroke:var(--t3);stroke-width:1;stroke-dasharray:1 3}
+  [hidden]{display:none!important}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">READYation · historical replay of real storms, 2014–2020</div>
+  <h1>READYation mission console</h1>
+  <p class="sub">Replay the 14 radiation storms READYation never saw in training, and every watch in that period that did <b>not</b> become a storm. The flux is the real GOES record, and each forecast uses only data available at that moment. <b>Playback is sped up; the data and forecasts are real.</b></p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-replay" aria-selected="true" aria-controls="view-replay">Replay a storm</button>
+    <button class="tab" role="tab" id="tab-whatif" aria-selected="false" aria-controls="view-whatif">What-if: alert rules</button>
+  </div>
+
+  <!-- ============ REPLAY ============ -->
+  <div id="view-replay" role="tabpanel" aria-labelledby="tab-replay">
+    <div class="row">
+      <select id="storm" aria-label="Storm"></select>
+      <button class="ctl play" id="play">▶ Play</button>
+      <div class="speed" id="speed" role="group" aria-label="Playback speed"></div>
+      <button class="ctl" id="jump">Jump to 6 h before</button>
+      <label class="chk"><input type="checkbox" id="ghost"> Show what happened next</label>
+    </div>
+    <div class="banner" id="nofc" hidden><b>Draft:</b> READYation's forecasts are not loaded yet. Tiers below use measured flux only; the forecast line and READYation-raised watches appear once the model's replay file is added.</div>
+
+    <div class="status">
+      <div class="tierbox t0" id="tierbox"><div class="plab" style="color:inherit;opacity:.8">Alert tier</div><div class="name" id="tiername">GREEN</div><div class="what" id="tierwhat">Quiet.</div></div>
+      <div class="stat"><div class="plab">Proton flux ≥10 MeV</div><div class="v" id="fluxnow">—</div><div class="k" id="noaanow">—</div></div>
+      <div class="stat"><div class="plab">READYation, next 6 h</div><div class="v" id="fc6" style="color:var(--aqua)">—</div><div class="k" id="fc6k">forecast peak</div></div>
+      <div class="stat"><div class="plab">Crew action</div><div class="k" id="action" style="font-size:13px;color:var(--t1);margin-top:8px">—</div></div>
+    </div>
+
+    <div class="card chartcard">
+      <div class="leg">
+        <span><i class="sw" style="background:rgba(224,169,43,.5)"></i>Yellow watch</span>
+        <span><i class="sw" style="background:rgba(224,101,47,.45)"></i>Orange storm (S1–S2)</span>
+        <span><i class="sw" style="background:rgba(236,106,99,.6)"></i>Red EVA hazard (S3+)</span>
+        <span><i class="ln" style="background:var(--blue)"></i>Measured flux</span>
+        <span><i class="ln dash"></i>READYation 24 h forecast</span>
+        <span id="ghostleg" hidden><i class="ln ghost"></i>What happened next</span>
+      </div>
+      <div class="chartwrap"><svg class="tl" id="chart" viewBox="0 0 960 330" role="img" aria-label="Proton flux timeline"></svg></div>
+      <div class="scrub"><input type="range" id="scrub" min="0" max="1" value="0" aria-label="Playback position"><span class="clock" id="clock">—</span></div>
+    </div>
+
+    <div class="two">
+      <div class="card"><div class="plab">Alert log</div><ul class="log" id="log"></ul><div class="empty" id="logempty">No alerts yet. Press play.</div></div>
+      <div class="card"><div class="plab" id="factlab">This storm</div>
+        <dl class="facts" id="facts"></dl>
+        <p class="note" id="factnote">Watch time counts from the start of an unbroken watch to the moment flux reaches 10 pfu (orange).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ WHAT-IF ============ -->
+  <div id="view-whatif" role="tabpanel" aria-labelledby="tab-whatif" hidden>
+    <span class="illu">Illustrative · alert rules only, no model</span>
+    <p class="sub" style="margin-top:10px">Shape a made-up proton event and see how the tier rules respond. This shows the rules, not a READYation forecast: yellow at ≥1 pfu held 15 min, orange at 10 pfu, red at 1,000 pfu.</p>
+    <div class="wi" style="margin-top:14px">
+      <div class="card">
+        <div class="plab">Scenario</div>
+        <div class="presets" id="presets"></div>
+        <div class="sl"><div class="top"><span>Background flux</span><b id="v-base"></b></div><input type="range" id="s-base" min="-1" max="0.3" step="0.05"></div>
+        <div class="sl"><div class="top"><span>Time to reach peak</span><b id="v-rise"></b></div><input type="range" id="s-rise" min="0.25" max="24" step="0.25"></div>
+        <div class="sl"><div class="top"><span>Peak flux</span><b id="v-peak"></b></div><input type="range" id="s-peak" min="0.3" max="3.7" step="0.05"></div>
+        <div class="sl"><div class="top"><span>Decay (e-fold)</span><b id="v-decay"></b></div><input type="range" id="s-decay" min="4" max="48" step="1"></div>
+      </div>
+      <div style="min-width:0">
+        <div class="card chartcard" style="margin-top:0">
+          <div class="chartwrap"><svg class="tl" id="wichart" viewBox="0 0 960 330" role="img" aria-label="What-if flux and tiers"></svg></div>
+        </div>
+        <div class="wistats">
+          <div class="stat"><div class="plab">Watch before storm</div><div class="v" id="wi-watch">—</div><div class="k">yellow → orange</div></div>
+          <div class="stat"><div class="plab">Highest tier</div><div class="v" id="wi-max">—</div><div class="k" id="wi-maxk">—</div></div>
+          <div class="stat"><div class="plab">Time at red</div><div class="v" id="wi-red">—</div><div class="k">≥1,000 pfu, EVA hazard</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">Data: NASA OMNI 5-minute record (GOES ≥10 MeV proton flux, geostationary orbit). Model: READYation = IBM Granite TinyTimeMixer r2 (ibm-granite/granite-timeseries-ttm-r2), head fine-tuned on 2010–2013. Tier levels follow NOAA's Solar Radiation Storm scale. Datathon project, not an operational tool.</div>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function(){
+const D = JSON.parse(document.getElementById('data').textContent);
+const ITEMS = D.storms.map(s=>Object.assign({kind:'storm'},s)).concat((D.watches||[]).map(w=>Object.assign({kind:'watch'},w)));
+const HAS_FC = ITEMS.some(s => Array.isArray(s.fc));
+const THR = D.thr_6h_log10;
+const STEP = 5 * 60000;                     // 5-min samples
+const TN = ['GREEN','YELLOW','ORANGE','RED'];
+const TWHAT = ['Quiet.','Watch: radiation storm likely within hours.','Storm in progress (NOAA S1–S2).','EVA hazard (NOAA S3+).'];
+const ACTION = ['No action. Routine monitoring.',
+  'Watch. Plan to finish or postpone EVAs; ready shielding stowage.',
+  'Heightened monitoring. Review EVA plans; NOAA lists no biological effect at S1.',
+  'NOAA: "radiation hazard avoidance recommended for astronauts on EVA." Move to shielded area.'];
+const CLS = ['t0','t1','t2','t3'];
+
+/* ---------- tier rules (same as tier_alerts.py) ---------- */
+function tiers(lf, gflag){            // lf: log10 flux (null = missing); gflag: READYation trigger per sample or null
+  const n = lf.length, out = new Int8Array(n); let on=false, up=0, down=0;
+  for (let i=0;i<n;i++){
+    const v = lf[i]; const has = v !== null && v !== undefined;
+    const trig = (has && v >= 0) || (gflag ? gflag[i] : false);
+    if (has || gflag){ if (trig){up++;down=0}else{up=0;down++} if(!on && up>=3) on=true; if(on && down>=24) on=false; }
+    if (has && v >= 1){ on = true; out[i] = v >= 3 ? 3 : 2; } else out[i] = on ? 1 : 0;
+  }
+  return out;
+}
+function watchLead(tr, o){             // watch before onset index o: {h, quiet}; quiet=false if the watch carried over from an earlier storm
+  if (o < 0 || tr[o] < 2) return null;
+  let s = o; while (s>0 && tr[s-1]===1) s--;
+  return {h:(o-s)*5/60, quiet: s===0 || tr[s-1]===0};
+}
+/* ---------- formatting ---------- */
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const pad=n=>String(n).padStart(2,'0');
+const fmt=d=>`${MON[d.getUTCMonth()]} ${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+const pfu=l=>{const v=Math.pow(10,l); return v>=100? Math.round(v).toLocaleString()+' pfu' : v>=10? v.toFixed(0)+' pfu' : v>=1? v.toFixed(1)+' pfu' : v.toFixed(2)+' pfu'};
+function noaa(l){ if(l===null) return 'no data'; const v=Math.pow(10,l);
+  return v>=1e5?'NOAA S5':v>=1e4?'NOAA S4':v>=1e3?'NOAA S3':v>=100?'NOAA S2':v>=10?'NOAA S1':'below NOAA storm level'; }
+const parseT = s => new Date(s.replace(' ','T')+'Z').getTime();
+
+/* ---------- chart ---------- */
+const W=960,H=330,L=48,R=946,T=14,B=292, YLO=-1, YHI=Math.log10(5000);
+const Y = l => T + (YHI - Math.max(YLO, Math.min(YHI, l)))/(YHI-YLO)*(B-T);
+function axes(t0,t1,X){
+  let s='';
+  [[0,'1'],[1,'10'],[2,'100'],[3,'1,000']].forEach(([l,lab])=>{
+    s+=`<line class="gl" x1="${L}" x2="${R}" y1="${Y(l)}" y2="${Y(l)}"/><text class="ax" x="${L-6}" y="${Y(l)+4}" text-anchor="end">${lab}</text>`;});
+  s+=`<text class="ax" x="${L-6}" y="${T+4}" text-anchor="end">pfu</text>`;
+  const first = Math.ceil(t0/ (12*3600e3)) * 12*3600e3;
+  for (let t=first; t<=t1; t+=12*3600e3){ const x=X(t);
+    s+=`<line class="gl" x1="${x}" x2="${x}" y1="${T}" y2="${B}" style="opacity:.5"/><text class="ax" x="${x}" y="${B+18}" text-anchor="middle">${fmt(new Date(t))}</text>`; }
+  return s;
+}
+function bands(tr, upto, X, tAt){
+  let s='', i=0;
+  while(i<=upto){ const lv=tr[i]; let j=i; while(j+1<=upto && tr[j+1]===lv) j++;
+    if(lv){ const x0=X(tAt(i)), x1=X(tAt(j+1)); s+=`<rect class="b${lv}" x="${x0.toFixed(1)}" y="${T}" width="${Math.max(x1-x0,.8).toFixed(1)}" height="${B-T}"/>`; }
+    i=j+1; }
+  return s;
+}
+function line(lf, a, b, X, tAt, cls){
+  let s='', seg=[];
+  const flush=()=>{ if(seg.length>1) s+=`<polyline class="${cls}" points="${seg.join(' ')}"/>`; seg=[]; };
+  const stride = Math.max(1, Math.floor((b-a)/700));
+  for(let i=a;i<=b;i+=stride){ const v=lf[i]; if(v===null){flush();continue} seg.push(X(tAt(i)).toFixed(1)+','+Y(v).toFixed(1)); }
+  flush(); return s;
+}
+
+/* ---------- replay state ---------- */
+const sel=document.getElementById('storm'), scrub=document.getElementById('scrub'), playBtn=document.getElementById('play');
+let S=null, trR=null, trF=null, gflag=null, n=0, t0=0, iNow=0, playing=false, speed=1, last=0;
+const focusT = s => parseT(s.kind==='storm' ? s.onset : s.start);
+const nW = ITEMS.filter(s=>s.kind==='watch').length;
+[['storm',`Radiation storms (${ITEMS.length-nW})`],['watch',`Watches that did not become storms (${nW})`]].forEach(([kind,label])=>{
+  const g=document.createElement('optgroup'); g.label=label; let any=false;
+  ITEMS.forEach((s,k)=>{ if(s.kind!==kind) return; any=true; const o=document.createElement('option'); const d=new Date(focusT(s));
+    o.value=k; o.textContent = kind==='storm'
+      ? `${MON[d.getUTCMonth()]} ${d.getUTCFullYear()} · ${s.sev} · peak ${Math.round(s.peak_pfu).toLocaleString()} pfu`
+      : `${MON[d.getUTCMonth()]} ${pad(d.getUTCDate())} ${d.getUTCFullYear()} · peak ${s.peak_pfu<1? s.peak_pfu.toFixed(2): s.peak_pfu.toFixed(1)} pfu · ${s.raised_by==='READYation'?'READYation':'flux'} watch`;
+    g.appendChild(o); });
+  if(any) sel.appendChild(g); });
+const SPEEDS=[[1,'1 h/s'],[4,'4 h/s'],[12,'12 h/s']];
+const spd=document.getElementById('speed');
+SPEEDS.forEach(([v,lab],k)=>{const b=document.createElement('button');b.textContent=lab;b.className=k===1?'on':'';b.onclick=()=>{speed=v;[...spd.children].forEach(c=>c.classList.toggle('on',c===b));};spd.appendChild(b);});
+speed=4;
+document.getElementById('nofc').hidden = HAS_FC;
+
+function load(k){
+  S=ITEMS[k]; n=S.flux.length; t0=parseT(S.t0);
+  gflag=null;
+  if(HAS_FC && S.fc){ gflag=new Uint8Array(n); for(let i=0;i<n;i++){ const j=Math.floor(i/3);
+    if(S.g6){ gflag[i]= S.g6[j]==='1' ?1:0; continue }      // exact decision from the export when present
+    const f=S.fc[j]; if(f){ let m=-9; for(let q=0;q<24;q++) m=Math.max(m,f[q]); gflag[i]= m>=THR ?1:0; } } }
+  trF=tiers(S.flux,null); trR=gflag? tiers(S.flux,gflag) : trF;
+  scrub.max=n-1;
+  const on=focusT(S); iNow=Math.max(0, Math.round((on-t0)/STEP) - (S.kind==='storm'? 36*12 : 12*12));   // start before onset / watch
+  scrub.value=iNow; facts(); render();
+}
+const tAt = i => t0 + i*STEP;
+function render(){
+  const tEnd=tAt(n), X=t=>L+(t-t0)/(tEnd-t0)*(R-L);
+  let s=axes(t0,tEnd,X);
+  s+=bands(trR,iNow,X,tAt);
+  const on=focusT(S); s+=`<line class="ons" x1="${X(on)}" x2="${X(on)}" y1="${T}" y2="${B}"/>`;
+  if(document.getElementById('ghost').checked) s+=line(S.flux,iNow,n-1,X,tAt,'fxg');
+  s+=line(S.flux,0,iNow,X,tAt,'fx');
+  // forecast from the latest 15-min forecast at or before now
+  let fcPeak6=null;
+  if(HAS_FC && S.fc){ const j=Math.floor(iNow/3), f=S.fc[j];
+    if(f){ const base=t0+j*15*60000; let pts=[]; fcPeak6=-9;
+      for(let q=0;q<f.length;q++){ const t=base+(q+1)*15*60000; if(t>tEnd) break; pts.push(X(t).toFixed(1)+','+Y(f[q]).toFixed(1)); if(q<24) fcPeak6=Math.max(fcPeak6,f[q]); }
+      if(pts.length>1) s+=`<polyline class="fc" points="${pts.join(' ')}"/>`; } }
+  const xn=X(tAt(iNow)); s+=`<line class="now" x1="${xn}" x2="${xn}" y1="${T}" y2="${B}"/><text class="nowlab" x="${Math.min(xn+5,R-40)}" y="${T+12}">NOW</text>`;
+  document.getElementById('chart').innerHTML=s;
+  // status
+  const lv=trR[iNow], box=document.getElementById('tierbox'); box.className='tierbox '+CLS[lv];
+  document.getElementById('tiername').textContent=TN[lv]; document.getElementById('tierwhat').textContent=TWHAT[lv];
+  let fv=S.flux[iNow]; if(fv===null){ for(let i=iNow;i>=0;i--) if(S.flux[i]!==null){fv=S.flux[i];break} }
+  document.getElementById('fluxnow').textContent= fv===null?'—':pfu(fv);
+  document.getElementById('noaanow').textContent=noaa(fv);
+  const f6=document.getElementById('fc6'), f6k=document.getElementById('fc6k');
+  if(fcPeak6!==null && fcPeak6>-9){ f6.textContent=pfu(fcPeak6); f6k.textContent = fcPeak6>=THR ? 'forecast peak · above alarm level' : 'forecast peak · below alarm level'; }
+  else { f6.textContent='—'; f6k.textContent = HAS_FC ? 'no forecast at this time' : 'forecasts not loaded yet'; }
+  document.getElementById('action').textContent=ACTION[lv];
+  document.getElementById('clock').textContent=fmt(new Date(tAt(iNow)))+' UTC';
+  scrub.value=iNow; logRender();
+}
+function logRender(){
+  const ul=document.getElementById('log'); let items=[];
+  for(let i=1;i<=iNow;i++) if(trR[i]!==trR[i-1]){
+    let why='';
+    if(trR[i]===1 && trR[i-1]===0) why = (gflag && trF[i]===0) ? 'Watch raised by READYation forecast' : 'Watch: flux held ≥1 pfu for 15 min';
+    else if(trR[i]===0) why='Watch cleared: 2 h without trigger';
+    else if(trR[i]===2 && trR[i-1]<2) why='Flux reached 10 pfu: NOAA S1 storm';
+    else if(trR[i]===3) why='Flux reached 1,000 pfu: NOAA S3';
+    else if(trR[i]===2 && trR[i-1]===3) why='Back below 1,000 pfu';
+    else if(trR[i]===1 && trR[i-1]>=2) why='Back below 10 pfu: watch continues';
+    items.push(`<li><span class="tm">${fmt(new Date(tAt(i)))}</span><span class="pill ${CLS[trR[i]]}">${TN[trR[i]]}</span><span>${why}</span></li>`); }
+  items.reverse(); ul.innerHTML=items.slice(0,60).join('');
+  document.getElementById('logempty').hidden = items.length>0;
+}
+function facts(){
+  const note=document.getElementById('factnote');
+  document.getElementById('factlab').textContent = S.kind==='watch' ? 'This watch' : 'This storm';
+  if(S.kind==='watch'){
+    const st=new Date(parseT(S.start)), pk=S.peak_pfu;
+    const rows=[['Watch raised', fmt(st)+' UTC'],
+      ['Raised by', S.raised_by==='READYation' ? 'READYation forecast (flux still below 1 pfu)' : 'Flux held ≥1 pfu for 15 min'],
+      ['Watch lasted', S.duration_h.toFixed(1)+' h'],
+      ['Peak flux during watch', (pk<1? pk.toFixed(2): pk.toFixed(1))+' pfu'],
+      ['Outcome', 'No storm: flux stayed below 10 pfu']];
+    document.getElementById('facts').innerHTML=rows.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('');
+    note.textContent = pk>=3 ? 'Near miss: radiation rose well above background (≥3 pfu) but stopped short of NOAA storm level.'
+      : pk>=1 ? 'Minor rise: flux climbed above 1 pfu but stayed far below storm level.'
+      : 'False alarm: flux never reached 1 pfu; the rise READYation forecast did not happen.';
+    return; }
+  note.textContent='Watch time counts from the start of an unbroken watch to the moment flux reaches 10 pfu (orange).';
+  const oi=Math.round((parseT(S.onset)-t0)/STEP), lr=watchLead(trR,oi), lf=watchLead(trF,oi), on=new Date(parseT(S.onset));
+  const fmtH=w=>w===null?'—':(w.quiet? w.h.toFixed(1)+' h' : 'watch carried over from the previous storm');
+  let rows=[['Storm began (≥10 pfu)', fmt(on)+' UTC'], ['Peak', Math.round(S.peak_pfu).toLocaleString()+' pfu · '+S.sev]];
+  rows.push(['Watch before storm, flux only', fmtH(lf)]);
+  rows.push(['Watch before storm, with READYation', HAS_FC? fmtH(lr) : 'pending forecasts']);
+  document.getElementById('facts').innerHTML=rows.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('');
+}
+function tick(ts){ if(!playing) return; if(!last) last=ts; const dt=(ts-last)/1000; last=ts;
+  iNow=Math.min(n-1, iNow + Math.max(1, Math.round(dt*speed*12))); render();
+  if(iNow>=n-1){ setPlay(false); return } requestAnimationFrame(tick); }
+function setPlay(v){ playing=v; last=0; playBtn.textContent=v?'❚❚ Pause':'▶ Play'; playBtn.classList.toggle('on',v); if(v){ if(iNow>=n-1) iNow=0; requestAnimationFrame(tick);} }
+playBtn.onclick=()=>setPlay(!playing);
+sel.onchange=()=>{ setPlay(false); load(+sel.value); };
+scrub.oninput=()=>{ iNow=+scrub.value; render(); };
+document.getElementById('ghost').onchange=e=>{ document.getElementById('ghostleg').hidden=!e.target.checked; render(); };
+document.getElementById('jump').onclick=()=>{ const on=focusT(S); iNow=Math.max(0,Math.round((on-t0)/STEP)-72); render(); };
+
+/* ---------- tabs ---------- */
+const tabs=[['tab-replay','view-replay'],['tab-whatif','view-whatif']];
+tabs.forEach(([tb,vw])=>document.getElementById(tb).onclick=()=>{ tabs.forEach(([a,b])=>{ const on=a===tb; document.getElementById(a).setAttribute('aria-selected',on); document.getElementById(b).hidden=!on; }); if(tb==='tab-replay') render(); else wiRender(); setPlay(false); });
+
+/* ---------- what-if ---------- */
+const PRE=[['Slow S1',{base:-0.6,rise:12,peak:1.6,decay:24}],['Fast S3',{base:-0.4,rise:0.5,peak:3.15,decay:30}],
+           ['Near miss',{base:-0.5,rise:8,peak:0.8,decay:12}],['Gradual S2',{base:-0.3,rise:20,peak:2.4,decay:36}]];
+const ids=['base','rise','peak','decay'], el=k=>document.getElementById('s-'+k);
+const pr=document.getElementById('presets');
+PRE.forEach(([name,v],k)=>{ const b=document.createElement('button'); b.textContent=name; b.onclick=()=>{ ids.forEach(i=>el(i).value=v[i]); [...pr.children].forEach(c=>c.classList.toggle('on',c===b)); wiRender(); }; pr.appendChild(b); if(k===1) b.classList.add('on'); });
+ids.forEach(i=>{ el(i).value=PRE[1][1][i]; el(i).oninput=()=>{ [...pr.children].forEach(c=>c.classList.remove('on')); wiRender(); }; });
+function wiRender(){
+  const base=+el('base').value, rise=+el('rise').value, peak=Math.max(+el('peak').value, base+0.05), decay=+el('decay').value;
+  document.getElementById('v-base').textContent=pfu(base); document.getElementById('v-rise').textContent=rise+' h';
+  document.getElementById('v-peak').textContent=pfu(peak); document.getElementById('v-decay').textContent=decay+' h';
+  const N=4*24*12, start=30*12, rs=rise*12, lf=new Array(N);
+  for(let i=0;i<N;i++){ const wob=0.06*Math.sin(i*0.9)+0.04*Math.sin(i*0.23);
+    let v; if(i<start) v=base; else if(i<start+rs) v=base+(peak-base)*((i-start)/rs); else { const h=(i-start-rs)/12; v=base+(peak-base)*Math.exp(-h/decay); }
+    lf[i]=+(v+wob).toFixed(3); }
+  const tr=tiers(lf,null), X=i=>L+i/N*(R-L), tA=i=>i;
+  let s=''; [[0,'1'],[1,'10'],[2,'100'],[3,'1,000']].forEach(([l,lab])=>{ s+=`<line class="gl" x1="${L}" x2="${R}" y1="${Y(l)}" y2="${Y(l)}"/><text class="ax" x="${L-6}" y="${Y(l)+4}" text-anchor="end">${lab}</text>`; });
+  [[-24,'−24 h'],[0,'rise starts'],[24,'+24 h'],[48,'+48 h']].forEach(([h,lab])=>{ const x=X(start+h*12); s+=`<line class="gl" x1="${x}" x2="${x}" y1="${T}" y2="${B}" style="opacity:.5"/><text class="ax" x="${x}" y="${B+18}" text-anchor="middle">${lab}</text>`; });
+  s+=bands(tr,N-1,X,tA)+line(lf,0,N-1,X,tA,'fx');
+  document.getElementById('wichart').innerHTML=s;
+  let oi=-1; for(let i=0;i<N;i++) if(tr[i]>=2){oi=i;break} const lead=watchLead(tr,oi), mx=Math.max(...tr), red=tr.reduce((a,v)=>a+(v===3),0)*5/60;
+  document.getElementById('wi-watch').textContent= lead===null? 'no storm' : lead.h.toFixed(1)+' h';
+  const m=document.getElementById('wi-max'); m.textContent=TN[mx]; m.style.color=['var(--green)','var(--yellow)','var(--orange)','var(--red)'][mx];
+  document.getElementById('wi-maxk').textContent=TWHAT[mx];
+  document.getElementById('wi-red').textContent= red? red.toFixed(1)+' h':'none';
+}
+
+/* ---------- start: Sept 2017 if present ---------- */
+let startK = ITEMS.findIndex(s=>s.kind==='storm' && s.onset.startsWith('2017-09-10')); if(startK<0) startK=0;
+sel.value=startK; load(startK); wiRender();
+})();
+</script>

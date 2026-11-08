@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body style="margin:0">
+<title>Radiation Comes First</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  :root{color-scheme:dark;--bg:#0b0e13;--s1:#141922;--s2:#1c2330;--s3:#232c3b;--line:#2b3545;--t1:#f1f3f6;--t2:#a8b1be;--t3:#79838f;
+    --blue:#3987e5;--orange:#e0652f;--red:#ec6a63;--violet:#9085e9;--aqua:#22b184;--yellow:#e0a92b;--green:#2fb57f;
+    --mono:ui-monospace,"SF Mono","Roboto Mono",Menlo,monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{background:var(--bg);color:var(--t1);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1000px 520px at 78% -10%,rgba(224,101,47,.09),transparent 60%)}
+  .wrap{max-width:880px;margin:0 auto;padding-block:30px 72px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+  .eyebrow{font:600 12px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--orange)}
+  h1{font-size:clamp(28px,4.8vw,44px);line-height:1.06;margin:11px 0 10px;font-weight:800;letter-spacing:-.02em}
+  h1 .hl{color:var(--orange)}
+  .sub{font-size:clamp(16px,2vw,18px);color:var(--t2);max-width:64ch}
+  .byline{font:500 12px/1.5 var(--mono);color:var(--t3);margin-top:12px}
+  section{margin-top:44px}
+  .chip{display:inline-block;font:700 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:4px 11px;border-radius:999px;margin-bottom:12px}
+  .chip.find{background:rgba(224,101,47,.14);color:var(--orange);border:1px solid rgba(224,101,47,.4)}
+  .chip.tool{background:rgba(57,135,229,.15);color:var(--blue);border:1px solid rgba(57,135,229,.4)}
+  .chip.bio{background:rgba(144,133,233,.15);color:var(--violet);border:1px solid rgba(144,133,233,.4)}
+  h2{font-size:clamp(21px,2.8vw,28px);font-weight:800;letter-spacing:-.01em;margin:0 0 6px;line-height:1.12}
+  p{color:var(--t2);font-size:15px;margin:7px 0 0}p b{color:var(--t1)}
+  .card{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:16px}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:720px){.tiles{grid-template-columns:1fr 1fr}}
+  .tile{background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:15px 16px}
+  .tile .n{font:800 30px/1 var(--mono);letter-spacing:-.02em}.tile .k{font-size:12px;color:var(--t2);margin-top:7px}
+  .tile .s{font-size:11px;color:var(--t3);margin-top:3px}
+  .c-o{color:var(--orange)}.c-b{color:var(--blue)}.c-r{color:var(--red)}.c-v{color:var(--violet)}.c-a{color:var(--aqua)}
+  .barwrap{margin-top:6px}
+  .bgrid{display:grid;grid-template-columns:62px 1fr;gap:9px;align-items:center;margin:7px 0;font-size:12.5px}
+  .bgrid .wl{color:var(--t3);font-family:var(--mono);font-size:11px;text-align:right}
+  .pair{display:flex;align-items:center;gap:8px}
+  .barbox{flex:1;position:relative;height:17px;background:var(--s3);border-radius:5px;overflow:hidden}
+  .bA{position:absolute;left:0;top:0;bottom:0;background:var(--orange);border-radius:5px}
+  .bR{position:absolute;left:0;top:0;bottom:0;background:var(--t3);opacity:.6;border-radius:5px}
+  .pct{font:700 11px var(--mono);width:66px}
+  .leg{display:flex;gap:16px;font-size:12px;color:var(--t2);margin:2px 0 8px}.leg i{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px}
+  .cases{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}@media(max-width:720px){.cases{grid-template-columns:1fr}}
+  .case{background:var(--s1);border:1px solid var(--line);border-radius:13px;padding:14px}
+  .case h4{margin:0 0 7px;font-size:14.5px}.case .ev{font-size:12px;color:var(--t2);margin:4px 0;padding-left:16px;position:relative}
+  .case .ev::before{content:attr(data-n);position:absolute;left:0;top:0;font:700 10px var(--mono);color:var(--orange);background:var(--s3);width:13px;height:13px;border-radius:50%;text-align:center;line-height:13px}
+  .case p{font-size:11.5px;color:var(--t3);margin-top:8px}
+  /* tool */
+  .segs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+  .seg{flex:1;min-width:110px;background:var(--s2);border:1px solid var(--line);color:var(--t2);border-radius:10px;padding:10px;font-size:12.5px;font-weight:600;cursor:pointer;text-align:center}
+  .seg.on{background:var(--orange);border-color:var(--orange);color:#fff}
+  .tool2{display:grid;grid-template-columns:1.1fr 1fr;gap:14px}@media(max-width:660px){.tool2{grid-template-columns:1fr}}
+  .panel{background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .plab{font:700 11px var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
+  .sbadge{display:inline-block;font:800 15px var(--mono);padding:3px 11px;border-radius:7px;margin:10px 0 6px}
+  .flux{font:800 34px/1 var(--mono);margin:8px 0 2px}
+  .verdict{border-radius:11px;padding:12px 14px;font-weight:700;border:1px solid;margin-top:12px;font-size:14px}
+  .v-green{background:rgba(47,181,127,.12);border-color:rgba(47,181,127,.5);color:var(--green)}
+  .v-yellow{background:rgba(224,169,43,.12);border-color:rgba(224,169,43,.5);color:var(--yellow)}
+  .v-red{background:rgba(236,106,99,.14);border-color:rgba(236,106,99,.55);color:var(--red)}
+  .v-grey{background:var(--s2);border-color:var(--line);color:var(--t2)}
+  .geonote{font-size:13px;color:var(--t2);margin-top:10px}.geonote b{color:var(--t1)}
+  /* genes */
+  .gene{margin:11px 0}
+  .gene .top{display:grid;grid-template-columns:92px 1fr 66px;gap:11px;align-items:center}
+  .gene .gn{font:700 12.5px var(--mono)}.gene .track{height:15px;background:var(--s3);border-radius:7px;overflow:hidden}
+  .gene .fill{height:100%;border-radius:7px}.gene .gv{font:600 11px var(--mono);color:var(--t2);text-align:right}
+  .gene .harm{font-size:11.5px;color:var(--t3);margin-top:3px}
+  details{margin-top:14px;background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:2px 16px}
+  summary{cursor:pointer;font-weight:600;padding:12px 0;font-size:14px}
+  details .b{font-size:13px;color:var(--t2);padding-bottom:12px}
+  ul{margin:6px 0;padding-left:18px}li{margin:4px 0;font-size:13px;color:var(--t2)}
+  .foot{margin-top:40px;border-top:1px solid var(--line);padding-top:16px;font-size:12px;color:var(--t3)}
+  a{color:var(--blue);text-decoration:none}
+
+  /* READYation (part 2) */
+  .c-a{color:var(--aqua)}h1 .hl-a{color:var(--aqua)}
+  .part{margin-top:68px;padding-top:26px;border-top:1px solid var(--line)}
+  .chip.model{background:rgba(34,177,132,.14);color:var(--aqua);border:1px solid rgba(34,177,132,.4)}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  @media(max-width:720px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:15px 16px;min-width:0}
+  .step p{font-size:13px;margin-top:6px}
+  .fa-grid{display:grid;grid-template-columns:minmax(0,210px) 1fr 82px;gap:9px 10px;align-items:center;font-size:12.5px}
+  @media(max-width:560px){.fa-grid{grid-template-columns:minmax(0,1fr) 72px}.fa-grid .barbox{grid-column:1/-1;order:0}}
+  .fa-l{color:var(--t2);min-width:0}.fa-v{font:600 11.5px var(--mono);color:var(--t2);text-align:right;font-variant-numeric:tabular-nums}
+  .fa-b{position:absolute;left:0;top:0;bottom:0;background:var(--t3);opacity:.6;border-radius:5px}
+  .fa-b.fa-ready{background:var(--aqua);opacity:1}
+  .fa-key{font-size:11.5px;color:var(--t3);margin-top:10px}
+  .tiers{display:grid;gap:12px}
+  .trow{display:grid;grid-template-columns:84px 1fr;gap:12px;align-items:start}
+  .trow b{font-size:14px;color:var(--t1)}.trow p{font-size:13px;margin-top:2px}
+  .tb{font:800 11px var(--mono);letter-spacing:.1em;text-align:center;padding:5px 0;border-radius:7px;border:1px solid}
+  .tb-g{color:var(--green);background:rgba(47,181,127,.12);border-color:rgba(47,181,127,.5)}
+  .tb-y{color:var(--yellow);background:rgba(224,169,43,.12);border-color:rgba(224,169,43,.5)}
+  .tb-o{color:var(--orange);background:rgba(224,101,47,.13);border-color:rgba(224,101,47,.5)}
+  .tb-r{color:var(--red);background:rgba(236,106,99,.14);border-color:rgba(236,106,99,.55)}
+  .tblwrap{overflow-x:auto}
+  table.cmp{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+  .cmp th{font:700 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--t3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  .cmp td{padding:10px;color:var(--t2);border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+  .cmp tr.hi td{color:var(--t1);font-weight:700;background:rgba(34,177,132,.08)}
+  .cmp tr.hi td:first-child{color:var(--aqua)}
+  .tz-leg{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:12px;color:var(--t2);margin:12px 0 4px}
+  .tz-leg i{display:inline-block;margin-right:6px;vertical-align:middle}
+  .tz-leg .sw{width:12px;height:12px;border-radius:3px}
+  .tz-leg .ln{width:16px;height:2px}.tz-leg .ln.dash{background:repeating-linear-gradient(90deg,var(--t3) 0 4px,transparent 4px 7px)}
+  .tz2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}@media(max-width:720px){.tz2{grid-template-columns:1fr}}
+  .tz2 .panel{min-width:0}.tz2 svg{display:block;width:100%;height:auto;margin-top:8px}
+  .tz-cap{font-size:12.5px}
+  .tz-y{fill:var(--yellow);opacity:.24}.tz-o{fill:var(--orange);opacity:.17}.tz-r{fill:var(--red);opacity:.5}
+  .tz-grid{stroke:var(--line);stroke-dasharray:3 3;fill:none}
+  .tz-ax{fill:var(--t3);font:10px var(--mono)}
+  .tz-flux{fill:none;stroke:var(--blue);stroke-width:1.7;stroke-linejoin:round}
+  .tz-mR{stroke:var(--aqua);stroke-width:1.6}.tz-mO{stroke:var(--t3);stroke-width:1.3;stroke-dasharray:4 3}
+  .tz-arrow{stroke:var(--aqua);stroke-width:2}
+</style>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Sheridan Datathon 2026 · NASA OMNI 2010–2020 × GeneLab OSD-118</div>
+    <h1>Radiation comes first. The storm alert comes <span class="hl">late — and often not at all.</span></h1>
+    <p class="sub">Astronauts are harmed by solar <b>radiation</b> (energetic protons), not by geomagnetic storms. Using every radiation storm with proton data in NASA's OMNI record, we show the two are <b>linked but not interchangeable</b>: the radiation arrives about two days before the geomagnetic storm — and most radiation storms bring no strong storm at all. A radiation-first advisory is what a crew actually needs.</p>
+    <div class="byline">Proton flux in OMNI ends 4 Mar 2020 — the radiation analysis covers 2010–2020.</div>
+  </header>
+
+  <!-- FINDING -->
+  <section>
+    <span class="chip find">✓ The finding</span>
+    <h2>The radiation leads; the storm follows about two days later.</h2>
+    <div class="tiles" style="margin-top:14px">
+      <div class="tile"><div class="n c-o">6×</div><div class="k">more likely: a strong geomagnetic storm in the 4 days <b>after</b> a radiation storm (24% vs 4% at random)</div></div>
+      <div class="tile"><div class="n c-b">2 days</div><div class="k">median head-start of the radiation over the geomagnetic storm, when both occur</div></div>
+      <div class="tile"><div class="n c-o">25 of 33</div><div class="k">radiation storms brought <b>no</b> strong geomagnetic storm within 4 days — a storm-based alert stays quiet</div></div>
+      <div class="tile"><div class="n c-r">r = 0.11</div><div class="k">same-day correlation — looks "unrelated" only because the two arrive ~2 days apart</div></div>
+    </div>
+    <div class="card">
+      <p style="margin:0 0 10px;color:var(--t1)"><b>Share of radiation storms (n=33) followed by a geomagnetic storm, vs the same check at 3,000 random times.</b></p>
+      <div class="leg"><span><i style="background:var(--orange)"></i>after a radiation storm</span><span><i style="background:var(--t3)"></i>at random times</span></div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:4px">Strong storms (SYM-H ≤ −100 nT)</div>
+      <div id="barsStrong"></div>
+      <div style="font-size:12px;color:var(--t3);margin:12px 0 4px">Moderate storms (SYM-H ≤ −50 nT)</div>
+      <div id="barsMod"></div>
+      <p>Big coronal mass ejections drive both — but the radiation outruns the cloud by about two days. The stronger the geomagnetic storm, the tighter the lagged link.</p>
+    </div>
+  </section>
+
+  <!-- THREE STORMS -->
+  <section>
+    <span class="chip find">◷ Read over days, not one day</span>
+    <h2>Three storms, each a sequence.</h2>
+    <div class="cases" style="margin-top:14px">
+      <div class="case"><h4>March 2012</h4>
+        <div class="ev" data-n="1">Radiation starts, 7 Mar</div>
+        <div class="ev" data-n="2">S3 peak — 5,655 pfu</div>
+        <div class="ev" data-n="3">Storm −149 nT, ~2 days later</div>
+        <p>Radiation peaked first; the strong geomagnetic storm came about two days later.</p></div>
+      <div class="case"><h4>September 2017</h4>
+        <div class="ev" data-n="1">Radiation starts, 5 Sep</div>
+        <div class="ev" data-n="2">Storm −144 nT, 8 Sep</div>
+        <div class="ev" data-n="3">Larger S3 (1,298 pfu), 10–11 Sep</div>
+        <p>The larger radiation event brought <b>no</b> strong storm at all.</p></div>
+      <div class="case"><h4>May 2024 (Gannon)</h4>
+        <div class="ev" data-n="1">NOAA S2, 207 pfu</div>
+        <div class="ev" data-n="2">Storm −497 nT</div>
+        <p>OMNI has <b>no proton data</b> after Mar 2020. NOAA reported an S2 radiation storm hours before the geomagnetic peak — so Gannon is <b>NO DATA</b> here, never "safe".</p></div>
+    </div>
+  </section>
+
+  <!-- TOOL -->
+  <section>
+    <span class="chip tool">▶ The advisory</span>
+    <h2>The crew decision follows the radiation — not the storm index.</h2>
+    <p>Select a scenario. The verdict uses NOAA's radiation-storm scale and its published wording; the geomagnetic index never changes it. A radiation storm also raises an <b>Earth heads-up</b> for a geomagnetic storm two to three days out.</p>
+    <div class="card">
+      <div class="segs" id="segs"></div>
+      <div class="tool2">
+        <div class="panel">
+          <div class="plab">&gt;10 MeV proton flux → NOAA radiation level</div>
+          <div class="flux" id="flux">—</div>
+          <div class="sbadge" id="sbadge">—</div>
+          <div class="verdict" id="verdict">—</div>
+        </div>
+        <div class="panel">
+          <div class="plab">Geomagnetic index (SYM-H)</div>
+          <div class="flux" id="symh" style="color:var(--blue)">—</div>
+          <div class="geonote" id="geonote"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BIOLOGY -->
+  <section>
+    <span class="chip bio">🧬 The biology, kept to what the data shows</span>
+    <h2>Which cells the radiation damages.</h2>
+    <p>NASA GeneLab <b>OSD-118</b> measured gene expression in human fibroblasts flown in space. It confirms these damage-response genes are <b>active</b> in that cell type (strongest detected probe, log scale). It gives no dose-response and does not identify which samples flew — so we draw <b>no flight effect and set no pathway weights</b>; the genes are context, not a computed index.</p>
+    <div class="card" id="genes"></div>
+  </section>
+
+  <section>
+    <span class="chip tool">◎ Why it matters</span>
+    <h2>A two-day warning no storm index can give.</h2>
+    <p>Because the radiation arrives first, proton flux is both the <b>correct crew hazard signal</b> and an early indicator that a geomagnetic storm may hit Earth two to three days later — useful for grid and satellite operators. Beyond low-Earth orbit (Moon, Mars), radiation is the dominant crew threat and geomagnetic indices no longer apply. The operational takeaway: <b>drive radiation decisions by proton flux and NOAA's radiation scale, not by geomagnetic storm alerts.</b></p>
+  </section>
+
+  <!-- ===================== READYATION ===================== -->
+  <div class="part">
+    <div class="eyebrow c-a">Part 2 · The model</div>
+    <h1 style="font-size:clamp(26px,4vw,38px)">READYation: a radiation watch <span class="hl-a">before</span> the storm is declared.</h1>
+    <p class="sub">NOAA declares a radiation storm once ≥10 MeV proton flux reaches 10 pfu. READYation forecasts that moment. It is <b>IBM Granite TinyTimeMixer r2</b>, a pretrained time-series foundation model, fine-tuned on the proton record so the crew gets a watch while the flux is still rising.</p>
+    <div class="byline">Model: ibm-granite/granite-timeseries-ttm-r2 · trained 2010–2013 · tested on 2014 – Mar 2020, data it never saw</div>
+  </div>
+
+  <section>
+    <span class="chip model">⚙ How it works</span>
+    <h2>It reads 5.3 days of proton flux and forecasts the next 24 hours.</h2>
+    <div class="steps">
+      <div class="step"><div class="plab">Input</div><p>Last 512 readings of ≥10 MeV proton flux from GOES, every 15 min (5.3 days).</p></div>
+      <div class="step"><div class="plab">Model</div><p>Granite TTM r2 keeps its pretrained core frozen. Only the forecasting head is retrained on 2010–2013, with rare flux rises oversampled.</p></div>
+      <div class="step"><div class="plab">Output</div><p>Flux forecast for the next 24 h. If the forecast peak in the next 6 h crosses the alarm level, READYation raises a <b>watch</b>.</p></div>
+    </div>
+    <p>Every model was tuned to the same rule, on alert during 1% of quiet time, and scored on the 14 radiation storms that began in the 2014–2020 test period.</p>
+  </section>
+
+  <section>
+    <span class="chip find">✓ The result</span>
+    <h2>Same storms caught, a third fewer false alarms.</h2>
+    <div class="tiles" style="margin-top:14px">
+      <div class="tile"><div class="n c-a">14 / 14</div><div class="k">test storms flagged before onset at the 6-hour horizon</div></div>
+      <div class="tile"><div class="n c-o">−37%</div><div class="k">false alarms vs. the persistence baseline (31 vs 49 over 6 years)</div></div>
+      <div class="tile"><div class="n c-b">3.8 h</div><div class="k">median watch before a storm, up from <b>2.2 h</b> with flux alone</div></div>
+      <div class="tile"><div class="n c-r">+1 / yr</div><div class="k">extra watch per year that ends without a storm: the cost of the earlier warning</div></div>
+    </div>
+    <div class="card">
+      <p style="margin:0 0 10px;color:var(--t1)"><b>False alarms over the 2014–2020 test period, 6-hour horizon.</b> All five models flagged all 14 storms.</p>
+      <div class="fa-grid">
+        <div class="fa-l">READYation (Granite, fine-tuned)</div><div class="barbox"><div class="fa-b fa-ready" style="width:7.2%"></div></div><div class="fa-v"><span class="c-a">31</span> · 5.0 h</div>
+        <div class="fa-l">Granite, not fine-tuned</div><div class="barbox"><div class="fa-b" style="width:9.7%"></div></div><div class="fa-v">42 · 5.5 h</div>
+        <div class="fa-l">Persistence (current flux)</div><div class="barbox"><div class="fa-b" style="width:11.4%"></div></div><div class="fa-v">49 · 4.8 h</div>
+        <div class="fa-l">Gradient boosting + solar wind</div><div class="barbox"><div class="fa-b" style="width:64%"></div></div><div class="fa-v">276 · 3.8 h</div>
+        <div class="fa-l">Gradient boosting, flux only</div><div class="barbox"><div class="fa-b" style="width:100%"></div></div><div class="fa-v">431 · 4.4 h</div>
+      </div>
+      <div class="fa-key">Bars: false alarms (alarm episodes not followed by a storm). Second number: median warning before onset.</div>
+      <p>Adding solar wind made the forecasts worse. That matches the finding above: the solar wind measured at L1 changes after the protons arrive, so it cannot warn of them.</p>
+    </div>
+  </section>
+
+  <section>
+    <span class="chip tool">▶ The alert</span>
+    <h2>Four tiers: a watch first, then NOAA's own levels.</h2>
+    <p>READYation only raises the <b>yellow watch</b>. Orange and red come from measured flux and NOAA's radiation scale, so the model never overrides the official level.</p>
+    <div class="card tiers">
+      <div class="trow"><span class="tb tb-g">GREEN</span><div><b>Quiet</b><p>No watch, no storm.</p></div></div>
+      <div class="trow"><span class="tb tb-y">YELLOW</span><div><b>Watch: storm likely within hours</b><p>Raised when READYation's 6 h forecast crosses its alarm level, or flux holds ≥1 pfu for 15 min. Clears after 2 h without a trigger.</p></div></div>
+      <div class="trow"><span class="tb tb-o">ORANGE</span><div><b>Storm, 10–1,000 pfu (NOAA S1–S2)</b><p>Heightened monitoring; review EVA plans. NOAA lists no biological effect at S1.</p></div></div>
+      <div class="trow"><span class="tb tb-r">RED</span><div><b>EVA hazard, ≥1,000 pfu (NOAA S3+)</b><p>NOAA: "radiation hazard avoidance recommended for astronauts on EVA."</p></div></div>
+    </div>
+    <div class="card">
+      <p style="margin:0 0 10px;color:var(--t1)"><b>What READYation adds to the watch, 2014–2020 (13 storms that began from quiet).</b></p>
+      <div class="tblwrap">
+        <table class="cmp">
+          <thead><tr><th>Watch raised by</th><th>Watches</th><th>Became a storm</th><th>No storm</th><th>Median watch</th><th>Middle half</th></tr></thead>
+          <tbody>
+            <tr><td>Flux ≥1 pfu only</td><td>28</td><td>13 (46%)</td><td>2.4 / yr</td><td>2.2 h</td><td>0.8–6.8 h</td></tr>
+            <tr class="hi"><td>READYation + flux</td><td>35</td><td>13 (37%)</td><td>3.6 / yr</td><td>3.8 h</td><td>2.0–8.9 h</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The gain is largest for the storms that gave the least warning: the bottom quarter rises from 0.8 h to 2.0 h. Orange then gave <b>7.6 h and 22 h</b> before the two red (S3) events in the test period.</p>
+    </div>
+  </section>
+
+  <section>
+    <span class="chip find">◷ Two storms, two speeds</span>
+    <h2>Warning time depends on how fast the protons rise.</h2>
+    <div class="tz-leg">
+      <span><i class="sw" style="background:rgba(224,169,43,.45)"></i>Yellow watch</span>
+      <span><i class="sw" style="background:rgba(224,101,47,.4)"></i>Orange storm</span>
+      <span><i class="sw" style="background:rgba(236,106,99,.6)"></i>Red EVA hazard</span>
+      <span><i class="ln" style="background:var(--aqua)"></i>READYation watch starts</span>
+      <span><i class="ln dash"></i>Flux-only watch starts</span>
+    </div>
+    <div class="tz2">
+      <div class="panel">
+        <div class="plab">Sept 2014 · slow rise, S2</div>
+        <svg viewBox="0 0 448 230" role="img"><rect class="tz-y" x="34.0" y="24" width="66.1" height="172"/><rect class="tz-y" x="184.6" y="24" width="58.3" height="172"/><rect class="tz-o" x="242.9" y="24" width="0.9" height="172"/><rect class="tz-y" x="243.8" y="24" width="3.5" height="172"/><rect class="tz-o" x="247.2" y="24" width="0.9" height="172"/><rect class="tz-y" x="248.1" y="24" width="1.7" height="172"/><rect class="tz-o" x="249.9" y="24" width="2.6" height="172"/><rect class="tz-y" x="252.5" y="24" width="0.9" height="172"/><rect class="tz-o" x="253.3" y="24" width="157.5" height="172"/><line class="tz-grid" x1="34" x2="410" y1="159.4" y2="159.4"/><text class="tz-ax" x="29" y="162.9" text-anchor="end">1</text><line class="tz-grid" x1="34" x2="410" y1="122.8" y2="122.8"/><text class="tz-ax" x="29" y="126.3" text-anchor="end">10</text><line class="tz-grid" x1="34" x2="410" y1="86.2" y2="86.2"/><text class="tz-ax" x="29" y="89.7" text-anchor="end">100</text><line class="tz-grid" x1="34" x2="410" y1="49.6" y2="49.6"/><text class="tz-ax" x="29" y="53.1" text-anchor="end">1k</text><polyline class="tz-flux" points="34.0,163.6 36.6,162.6 39.2,162.9 41.8,159.4 44.4,158.2 47.1,159.1 49.7,158.9 52.3,163.6 54.9,158.9 57.5,160.5 60.1,160.5 62.7,157.9 65.3,158.5 67.9,161.2 70.6,161.6 73.2,160.0 75.8,160.2 78.4,159.2 81.0,160.4 83.6,165.5 86.2,161.6 88.8,163.1 91.4,162.9 94.1,163.8 96.7,160.4 99.3,159.9 101.9,160.4 104.5,166.2 107.1,158.9 109.7,165.1 112.3,164.4 114.9,164.0 117.6,164.8 120.2,160.4 122.8,164.4 125.4,163.3 128.0,164.2 130.6,161.6 133.2,164.6 135.8,163.1 138.4,161.1 141.1,166.5 143.7,164.8 146.3,164.0 148.9,162.6 151.5,160.0 154.1,163.3 156.7,162.4 159.3,162.4 161.9,162.9 164.6,162.9 167.2,161.4 169.8,159.1 172.4,157.2 175.0,161.6 177.6,161.1 180.2,155.3 182.8,158.9 185.4,158.2 188.1,156.9 190.7,155.0 193.3,157.7 195.9,154.3 198.5,154.9 201.1,150.1 203.7,149.7 206.3,147.4 208.9,144.5 211.6,144.6 214.2,142.1 216.8,141.6 219.4,141.9 222.0,138.0 224.6,136.0 227.2,134.3 229.8,128.4 232.4,127.4 235.1,125.7 237.7,125.3 240.3,124.8 242.9,122.7 245.5,121.8 248.1,121.8 250.7,122.2 253.3,117.8 255.9,116.4 258.6,117.1 261.2,115.9 263.8,113.0 266.4,110.1 269.0,108.7 271.6,108.2 274.2,107.2 276.8,106.5 279.4,107.4 282.1,106.5 284.7,106.7 287.3,106.1 289.9,106.1 292.5,106.1 295.1,107.4 297.7,106.9 300.3,107.1 302.9,107.6 305.6,107.7 308.2,107.6 310.8,108.7 313.4,108.8 316.0,109.3 318.6,110.6 321.2,110.2 323.8,109.5 326.4,109.1 329.1,110.3 331.7,111.8 334.3,111.9 336.9,110.6 339.5,109.5 342.1,110.0 344.7,110.1 347.3,111.5 349.9,112.1 352.6,111.6 355.2,111.5 357.8,111.1 360.4,112.6 363.0,112.2 365.6,112.4 368.2,113.3 370.8,114.3 373.4,114.6 376.1,115.7 378.7,117.3 381.3,117.0 383.9,116.7 386.5,118.4 389.1,117.3 391.7,116.7 394.3,116.4 396.9,114.3 399.6,115.0 402.2,114.7 404.8,114.8 407.4,113.9 410.0,113.5"/><text class="tz-ax" x="96.7" y="210" text-anchor="middle">10 Sep 12:00</text><text class="tz-ax" x="222.0" y="210" text-anchor="middle">11 Sep 00:00</text><text class="tz-ax" x="347.3" y="210" text-anchor="middle">11 Sep 12:00</text><line class="tz-mR" x1="184.6" x2="184.6" y1="24" y2="196"/><line class="tz-arrow" x1="184.6" x2="242.9" y1="186" y2="186"/><line class="tz-mO" x1="193.3" x2="193.3" y1="24" y2="196"/></svg>
+        <p class="tz-cap"><b>READYation 5.6 h</b> before the storm, vs 4.8 h from flux alone. Flux climbed for hours, so both had time.</p>
+      </div>
+      <div class="panel">
+        <div class="plab">Sept 2017 · fast rise, S3</div>
+        <svg viewBox="0 0 448 230" role="img"><rect class="tz-y" x="130.1" y="24" width="38.6" height="172"/><rect class="tz-o" x="168.7" y="24" width="95.0" height="172"/><rect class="tz-r" x="263.8" y="24" width="25.1" height="172"/><rect class="tz-o" x="288.8" y="24" width="30.3" height="172"/><rect class="tz-r" x="319.1" y="24" width="42.8" height="172"/><rect class="tz-o" x="362.0" y="24" width="5.2" height="172"/><rect class="tz-r" x="367.2" y="24" width="43.9" height="172"/><line class="tz-grid" x1="34" x2="410" y1="159.4" y2="159.4"/><text class="tz-ax" x="29" y="162.9" text-anchor="end">1</text><line class="tz-grid" x1="34" x2="410" y1="122.8" y2="122.8"/><text class="tz-ax" x="29" y="126.3" text-anchor="end">10</text><line class="tz-grid" x1="34" x2="410" y1="86.2" y2="86.2"/><text class="tz-ax" x="29" y="89.7" text-anchor="end">100</text><line class="tz-grid" x1="34" x2="410" y1="49.6" y2="49.6"/><text class="tz-ax" x="29" y="53.1" text-anchor="end">1k</text><polyline class="tz-flux" points="34.0,169.8 37.1,170.1 40.3,177.0 43.4,169.2 46.5,169.8 49.7,171.1 52.8,167.5 55.9,163.6 59.1,167.8 62.2,168.1 65.3,165.1 68.5,170.4 71.6,168.6 74.7,168.6 77.9,171.4 81.0,170.1 84.1,170.7 87.3,169.2 90.4,171.1 93.5,170.7 96.7,173.6 99.8,177.5 102.9,170.4 106.1,172.1 109.2,173.2 112.3,173.2 115.5,174.8 118.6,166.2 121.7,172.4 124.9,167.8 128.0,174.8 131.1,168.3 134.3,172.4 137.4,176.1 140.5,172.1 143.7,173.2 146.8,167.8 149.9,173.6 153.1,171.1 156.2,170.1 159.3,170.1 162.5,150.7 165.6,125.5 168.7,107.9 171.9,85.3 175.0,77.4 178.1,71.5 181.3,65.5 184.4,63.4 187.5,63.4 190.7,58.5 193.8,58.1 196.9,60.2 200.1,61.8 203.2,62.5 206.3,64.5 209.5,65.6 212.6,64.7 215.7,63.5 218.9,61.0 222.0,60.4 225.1,56.4 228.3,55.5 231.4,55.4 234.5,54.1 237.7,52.6 240.8,52.4 243.9,50.8 247.1,51.3 250.2,50.7 253.3,50.6 256.5,50.3 259.6,50.3 262.7,47.6 265.9,46.8 269.0,46.3 272.1,46.3 275.3,46.8 278.4,48.2 281.5,47.7 284.7,48.0 287.8,49.4 290.9,50.4 294.1,50.9 297.2,51.8 300.3,51.6 303.5,51.0 306.6,50.5 309.7,50.1 312.9,49.7 316.0,49.6 319.1,48.0 322.3,48.3 325.4,47.9 328.5,47.6 331.7,48.3 334.8,48.1 337.9,48.9 341.1,48.1 344.2,47.6 347.3,47.3 350.5,47.2 353.6,47.0 356.7,48.2 359.9,49.2 363.0,50.0 366.1,48.6 369.3,48.7 372.4,47.6 375.5,47.2 378.7,46.5 381.8,46.1 384.9,46.2 388.1,45.8 391.2,46.4 394.3,47.3 397.5,46.7 400.6,46.9 403.7,45.4 406.9,45.6 410.0,47.5"/><text class="tz-ax" x="109.2" y="210" text-anchor="middle">10 Sep 12:00</text><text class="tz-ax" x="259.6" y="210" text-anchor="middle">11 Sep 00:00</text><text class="tz-ax" x="410.0" y="210" text-anchor="middle">11 Sep 12:00</text><line class="tz-mR" x1="130.1" x2="130.1" y1="24" y2="196"/><line class="tz-arrow" x1="130.1" x2="168.7" y1="186" y2="186"/><line class="tz-mO" x1="166.6" x2="166.6" y1="24" y2="196"/></svg>
+        <p class="tz-cap"><b>READYation 3.1 h</b> vs 0.2 h from flux alone. The X8.2 flare behind this storm peaked at 16:06 UTC, after the watch began, so the watch reflects flux still elevated from the week's earlier storms, not a forecast of the flare. Its 24 h forecast did reach 1,000 pfu <b>6.3 h before red</b>.</p>
+      </div>
+    </div>
+    <p>Fast storms come from flares magnetically well connected to Earth; their protons arrive within minutes. Warning before those needs flare and CME inputs, not proton flux alone.</p>
+  </section>
+
+  <section>
+    <span class="chip tool">◎ What READYation gives a crew</span>
+    <h2>Hours of watch before the radiation storm, on NOAA's scale.</h2>
+    <p>The finding above shows the radiation is the crew hazard and arrives first. READYation moves the warning earlier still: a watch a median of <b>3.8 hours</b> before NOAA would declare the storm, at a cost of about one extra watch a year. For crews beyond low-Earth orbit, that is time to finish or postpone an EVA and prepare shielding before onboard dose rises.</p>
+  </section>
+
+
+  <details>
+    <summary>Limits &amp; honesty</summary>
+    <div class="b">
+      <ul>
+        <li>Only <b>9</b> radiation storms were followed by a strong geomagnetic storm, so the 24% has a wide 95% interval (~12–38%).</li>
+        <li>Proton data covers <b>2010–2020</b>, a relatively weak solar cycle; the 2024 Gannon superstorm is outside it and shown as NO DATA.</li>
+        <li><b>&gt;10 MeV flux is NOAA's scale, not a dose.</b> Dose behind shielding depends on higher-energy protons (&gt;100 MeV) and on the spacecraft.</li>
+        <li><b>READYation was tested on 14 storms from one training run.</b> The 37% cut in false alarms is about 18 alarms over six years and should be confirmed with more seeds and more storms.</li>
+        <li>From proton flux alone, <b>fast-rising storms give under an hour</b> of warning. Earlier warning needs flare X-ray and CME inputs (GOES XRS, NASA DONKI).</li>
+        <li>READYation forecasts flux at geostationary orbit, <b>not dose inside a spacecraft</b>. NASA bases Artemis shelter decisions on onboard dose.</li>
+        <li>READYation counts a new storm after 24 h below 10 pfu (41 onsets in 2010–2020), a different grouping from the 33 radiation storms in Part 1.</li>
+        <li>The gene data shows <b>activity in one cell type</b> (fibroblasts), not damage. Linking flux to cellular damage would require GeneLab experiments that irradiate cells at known doses.</li>
+      </ul>
+    </div>
+  </details>
+
+  <div class="foot">
+    <p>Data: NASA OMNI 5-minute solar wind &amp; indices (omniweb.gsfc.nasa.gov) · NASA GeneLab OSD-118 (human fibroblasts, spaceflight). Radiation levels &amp; wording: NOAA Space Weather Scales. May 2024 radiation level: NOAA SWPC as reported by Schennetten et al. (2024), Front. Astron. Space Sci. Model: IBM Granite TinyTimeMixer r2 (ibm-granite/granite-timeseries-ttm-r2, granite-tsfm). Datathon project — not an operational tool.</p>
+  </div>
+</div>
+<script>
+const EV={"strong":{"2":{"after":15,"random":2},"3":{"after":21,"random":3},"4":{"after":24,"random":4},"5":{"after":24,"random":5}},
+          "moderate":{"2":{"after":48,"random":14},"3":{"after":55,"random":18},"4":{"after":58,"random":23},"5":{"after":67,"random":26}}};
+function drawBars(host,obj){const h=document.getElementById(host);h.innerHTML='';
+  [2,3,4,5].forEach(w=>{const a=obj[w].after,r=obj[w].random;const row=document.createElement('div');row.className='bgrid';
+    row.innerHTML=`<div class="wl">${w} days</div><div class="pair"><div class="barbox"><div class="bR" style="width:${r}%"></div><div class="bA" style="width:${a}%;opacity:.92"></div></div><div class="pct"><span style="color:var(--orange)">${a}%</span> <span style="color:var(--t3)">/ ${r}%</span></div></div>`;
+    h.appendChild(row);});}
+drawBars('barsStrong',EV.strong);drawBars('barsMod',EV.moderate);
+
+// genes — strongest-probe expression + harm (no weights)
+const GENES=[
+ ['CDKN1A',15458,'var(--aqua)','DNA / cell-cycle arrest (p21)','↑ sustained arrest drives senescence; tissue stops regenerating'],
+ ['IL6',5874,'var(--violet)','Inflammation','↑ systemic + neuro-inflammation; vascular and brain injury'],
+ ['SOD2',1254,'var(--red)','Oxidative stress','↓ defense overwhelmed → oxidative damage to DNA & mitochondria'],
+ ['ATM',832,'var(--aqua)','DNA break sensor','↑ double-strand breaks accumulate → permanent mutations'],
+ ['BAX',823,'var(--red)','Apoptosis','↑ triggers programmed death of cells, including neurons'],
+ ['ICAM1',217,'var(--violet)','Endothelial / BBB inflammation','↑ blood-brain barrier turns permeable → cognitive decline'],
+ ['TP53',198,'var(--aqua)','DNA damage sensor (p53)','↑ orders cell death; loss/mutation permits cancer']];
+(function(){const h=document.getElementById('genes');const mx=Math.log10(20000);
+ GENES.forEach(([g,v,c,path,harm])=>{const w=Math.log10(v)/mx*100;const b=document.createElement('div');b.className='gene';
+  b.innerHTML=`<div class="top"><div class="gn">${g}</div><div class="track"><div class="fill" style="width:${w}%;background:${c}"></div></div><div class="gv">${v.toLocaleString()}</div></div>
+   <div class="harm"><b style="color:var(--t2)">${path}.</b> ${harm}</div>`;h.appendChild(b);});})();
+
+// advisory tool — proton flux → NOAA S-scale
+const SC=[
+ {k:'quiet',name:'Quiet day',proton:0.2,symh:-15},
+ {k:'spe2012',name:'March 2012',proton:5655,symh:-149,lag:'A −149 nT storm followed about 2 days later.'},
+ {k:'spe2017',name:'Sept 2017',proton:1298,symh:-144,lag:'This S3 event brought no strong storm; a −144 nT storm had come earlier.'},
+ {k:'gannon',name:'May 2024 Gannon',proton:null,noaa:'S2 (207 pfu, NOAA)',symh:-497,nodata:true}];
+let cur='spe2012';
+const segs=document.getElementById('segs');
+SC.forEach(s=>{const b=document.createElement('button');b.className='seg'+(s.k===cur?' on':'');b.textContent=s.name;
+  b.onclick=()=>{cur=s.k;[...segs.children].forEach((c,i)=>c.classList.toggle('on',SC[i].k===cur));render();};segs.appendChild(b);});
+function sInfo(pfu){
+  if(pfu>=1e5)return['S5','var(--red)','v-red','Extreme radiation storm. NOAA: unavoidable high radiation hazard to astronauts on EVA.'];
+  if(pfu>=1e4)return['S4','var(--red)','v-red','Severe radiation storm. NOAA: unavoidable radiation hazard to astronauts on EVA.'];
+  if(pfu>=1e3)return['S3','var(--red)','v-red','Strong radiation storm. NOAA: radiation hazard avoidance recommended for astronauts on EVA.'];
+  if(pfu>=100)return['S2','var(--yellow)','v-yellow','Moderate radiation storm. NOAA: elevated exposure; monitor crew on EVA.'];
+  if(pfu>=10)return['S1','var(--green)','v-green','Minor radiation storm. NOAA: no biological impact expected.'];
+  return['—','var(--green)','v-green','No radiation storm. EVA permissible.'];}
+function render(){
+  const s=SC.find(x=>x.k===cur);
+  const flux=document.getElementById('flux'),sb=document.getElementById('sbadge'),v=document.getElementById('verdict');
+  if(s.nodata){flux.textContent='NO DATA';flux.style.color='var(--t3)';sb.textContent=s.noaa;sb.style.background='var(--s3)';sb.style.color='var(--t2)';
+    v.className='verdict v-grey';v.innerHTML='<b>NO OMNI PROTON DATA</b> (record ends Mar 2020). NOAA reported an S2 radiation storm this day — never treat as "safe".';}
+  else{const [lv,col,vc,txt]=sInfo(s.proton);
+    flux.textContent=s.proton.toLocaleString()+' pfu';flux.style.color=col;
+    sb.textContent=lv==='—'?'No storm':'NOAA '+lv;sb.style.background='transparent';sb.style.color=col;sb.style.border='1px solid '+col;
+    v.className='verdict '+vc;v.innerHTML='<b>'+txt.split('.')[0]+'.</b> '+txt.split('.').slice(1).join('.').trim();}
+  document.getElementById('symh').textContent=s.symh+' nT';
+  const gn=document.getElementById('geonote');
+  if(s.nodata) gn.innerHTML='Geomagnetic storm reached −497 nT — but by the rule above, the <b>radiation</b> channel (not this index) drives the crew verdict.';
+  else if(s.lag) gn.innerHTML='<b>Earth heads-up:</b> '+s.lag+' The geomagnetic index does not change the crew radiation verdict.';
+  else gn.innerHTML='Quiet. No radiation storm, no geomagnetic storm.';
+}
+render();
+</script>
+
+</body>
+</html>

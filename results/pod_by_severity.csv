@@ -1,0 +1,55 @@
+split,H_h,model,sev,mean,count
+"forward (train<=2013, test>=2014)",1,flux+solar_wind,S1,1.0,9
+"forward (train<=2013, test>=2014)",1,flux+solar_wind,S2,1.0,3
+"forward (train<=2013, test>=2014)",1,flux+solar_wind,S3+,1.0,2
+"forward (train<=2013, test>=2014)",1,flux_only,S1,1.0,9
+"forward (train<=2013, test>=2014)",1,flux_only,S2,1.0,3
+"forward (train<=2013, test>=2014)",1,flux_only,S3+,1.0,2
+"forward (train<=2013, test>=2014)",1,persistence,S1,1.0,9
+"forward (train<=2013, test>=2014)",1,persistence,S2,1.0,3
+"forward (train<=2013, test>=2014)",1,persistence,S3+,1.0,2
+"forward (train<=2013, test>=2014)",6,flux+solar_wind,S1,1.0,9
+"forward (train<=2013, test>=2014)",6,flux+solar_wind,S2,1.0,3
+"forward (train<=2013, test>=2014)",6,flux+solar_wind,S3+,1.0,2
+"forward (train<=2013, test>=2014)",6,flux_only,S1,1.0,9
+"forward (train<=2013, test>=2014)",6,flux_only,S2,1.0,3
+"forward (train<=2013, test>=2014)",6,flux_only,S3+,1.0,2
+"forward (train<=2013, test>=2014)",6,persistence,S1,1.0,9
+"forward (train<=2013, test>=2014)",6,persistence,S2,1.0,3
+"forward (train<=2013, test>=2014)",6,persistence,S3+,1.0,2
+"forward (train<=2013, test>=2014)",24,flux+solar_wind,S1,1.0,9
+"forward (train<=2013, test>=2014)",24,flux+solar_wind,S2,1.0,3
+"forward (train<=2013, test>=2014)",24,flux+solar_wind,S3+,1.0,2
+"forward (train<=2013, test>=2014)",24,flux_only,S1,1.0,9
+"forward (train<=2013, test>=2014)",24,flux_only,S2,1.0,3
+"forward (train<=2013, test>=2014)",24,flux_only,S3+,1.0,2
+"forward (train<=2013, test>=2014)",24,persistence,S1,1.0,9
+"forward (train<=2013, test>=2014)",24,persistence,S2,1.0,3
+"forward (train<=2013, test>=2014)",24,persistence,S3+,1.0,2
+leave-one-year-out,1,flux+solar_wind,S1,0.96875,32
+leave-one-year-out,1,flux+solar_wind,S2,1.0,5
+leave-one-year-out,1,flux+solar_wind,S3+,1.0,4
+leave-one-year-out,1,flux_only,S1,0.96875,32
+leave-one-year-out,1,flux_only,S2,1.0,5
+leave-one-year-out,1,flux_only,S3+,1.0,4
+leave-one-year-out,1,persistence,S1,0.96875,32
+leave-one-year-out,1,persistence,S2,1.0,5
+leave-one-year-out,1,persistence,S3+,1.0,4
+leave-one-year-out,6,flux+solar_wind,S1,0.9375,32
+leave-one-year-out,6,flux+solar_wind,S2,1.0,5
+leave-one-year-out,6,flux+solar_wind,S3+,1.0,4
+leave-one-year-out,6,flux_only,S1,0.96875,32
+leave-one-year-out,6,flux_only,S2,1.0,5
+leave-one-year-out,6,flux_only,S3+,1.0,4
+leave-one-year-out,6,persistence,S1,0.96875,32
+leave-one-year-out,6,persistence,S2,1.0,5
+leave-one-year-out,6,persistence,S3+,1.0,4
+leave-one-year-out,24,flux+solar_wind,S1,0.96875,32
+leave-one-year-out,24,flux+solar_wind,S2,1.0,5
+leave-one-year-out,24,flux+solar_wind,S3+,1.0,4
+leave-one-year-out,24,flux_only,S1,0.96875,32
+leave-one-year-out,24,flux_only,S2,1.0,5
+leave-one-year-out,24,flux_only,S3+,1.0,4
+leave-one-year-out,24,persistence,S1,0.96875,32
+leave-one-year-out,24,persistence,S2,1.0,5
+leave-one-year-out,24,persistence,S3+,1.0,4
