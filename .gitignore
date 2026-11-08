@@ -1,0 +1,12 @@
+# data (139 MB, over GitHub's 100 MB limit)
+*.csv
+*.csv.gz
+
+# outputs (regenerate with the commands in README)
+out/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
