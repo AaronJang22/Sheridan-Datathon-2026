@@ -1,0 +1,14 @@
+# OMNI data (139 MB, over GitHub's 100 MB limit) and generated forecasts
+nasa_omni_*.csv
+data/omni_5min_rebuilt.csv
+data/raw/
+*.csv.gz
+
+# outputs (regenerate with the commands in README)
+out/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
