@@ -133,6 +133,6 @@ Datathon project, not an operational tool.
 
 ## Credits
 
-- Data: NASA OMNI (omniweb.gsfc.nasa.gov); GOES proton flux from NOAA.
+- Data: NASA OMNI (omniweb.gsfc.nasa.gov); GOES proton flux from NOAA. NASA Genelab (osdr.nasa.gov/bio/repo/data/studies/OSD-118)
 - Model: IBM Granite TinyTimeMixer r2 via [granite-tsfm](https://github.com/ibm-granite/granite-tsfm).
 - Radiation levels and wording: NOAA Space Weather Scales.
